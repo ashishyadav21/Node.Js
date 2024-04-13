@@ -1,0 +1,12 @@
+/*
+  Warnings:
+
+  - You are about to drop the column `captions` on the `posts` table. All the data in the column will be lost.
+
+*/
+-- DropIndex
+DROP INDEX "posts_userId_key";
+
+-- AlterTable
+ALTER TABLE "posts" DROP COLUMN "captions",
+ADD COLUMN     "caption" VARCHAR;

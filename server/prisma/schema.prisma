@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model images {
+  filename  String   @db.VarChar
+  filepath  String   @db.VarChar
+  mimetype  String   @db.VarChar
+  size      BigInt
+  id        String   @id @db.Uuid
+  createdAt DateTime @default(now())
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model users {
+  username    String  @unique @db.VarChar
+  password    String  @db.VarChar
+  dateofbirth String? @db.VarChar
+  firstname   String? @db.VarChar
+  lastname    String? @db.VarChar
+  email       String? @db.VarChar
+  id          String  @id @db.Uuid
+  imageUrl    String? @db.VarChar
+  posts       posts[]
+  likes       likes[]
+}
+
+model posts {
+  caption   String?    @db.VarChar
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now())
+  id        String     @id @db.Uuid
+  user      users      @relation(fields: [userId], references: [id])
+  userId    String     @db.Uuid
+  image_url String?    @db.VarChar
+  location  String?    @db.VarChar
+  category  String?    @db.VarChar
+  likes     likes[]
+  comments  comments[]
+}
+
+model likes {
+  id        String   @id @db.Uuid
+  user      users    @relation(fields: [userId], references: [id])
+  userId    String   @db.Uuid
+  post      posts    @relation(fields: [postId], references: [id])
+  postId    String   @db.Uuid
+  createdAt DateTime @default(now())
+}
+
+model comments {
+  id        String   @id @db.Uuid
+  post      posts    @relation(fields: [postId], references: [id])
+  postId    String   @db.Uuid
+  text      String   @db.VarChar
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  userId    String   @db.Uuid
+}
